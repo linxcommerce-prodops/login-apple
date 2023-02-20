@@ -1,0 +1,50 @@
+<html>
+
+<head>
+</head>
+
+<body>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"
+		integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+	<script type="text/javascript"
+		src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+	<div id="appleid-signin" data-color="black" data-border="true" data-type="sign in"></div>
+	<script type="text/javascript">
+
+		var attempt = 0;
+		var dataApple = AppleID.auth.init({
+			clientId: "br.com.dcg.core.liquid.apple",
+			scope: "name email",
+			//redirectURI : "https://liquid.core.dcg.com.br/oauth/apple/callback",
+			redirectURI: "https://0d26-2804-14d-4c86-14ec-480b-d5f8-d213-7d56.sa.ngrok.io/auth",
+			state: "webapi",
+			usePopup: false,
+			response_mode: "from_post",
+			response_type: "code"
+		});
+		document.addEventListener("AppleIDSignInOnSuccess", (dataApple) => {
+			//debugger;
+			console.log('dataApple', dataApple);
+			attempt++;
+			if (dataApple != undefined && attempt == 1) {
+				
+				$.ajax({
+					//url : "https://liquid.core.dcg.com.br/oauth/apple/callback",
+					url: '/auth',
+					data: {detail: JSON.stringify(dataApple.detail)},
+					type: "POST", 
+					dataType: "json", 
+					success: function(response) {
+						attempt = 0;
+						
+					}
+				});		
+				
+
+			}
+		});
+		document.addEventListener("AppleIDSignInOnFailure", (error) => { console.log(error); });
+	</script>
+</body>
+
+</html>
